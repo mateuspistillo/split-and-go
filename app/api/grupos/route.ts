@@ -1,4 +1,5 @@
 import { pool } from "@/lib/db";
+import type { ResultSetHeader } from "mysql2/promise";
 
 export async function GET() {
   const [linhas] = await pool.query("SELECT * FROM grupo");
@@ -41,5 +42,10 @@ export async function POST(request: Request) {
     );
   }
 
-  return Response.json({ ok: true });
+  const [resultado] = await pool.query<ResultSetHeader>(
+    "INSERT INTO grupo (nome) VALUES (?)",
+    [nome]
+  );
+
+  return Response.json({ id: resultado.insertId }, { status: 201 });
 }
