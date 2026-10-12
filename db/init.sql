@@ -9,4 +9,4 @@ CREATE TABLE participante (
   grupo_id INT NOT NULL,
   nome VARCHAR(100) NOT NULL,
   FOREIGN KEY (grupo_id) REFERENCES grupo(id) ON DELETE CASCADE
-); 
+);
