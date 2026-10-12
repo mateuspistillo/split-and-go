@@ -47,5 +47,14 @@ export async function POST(request: Request) {
     [nome]
   );
 
-  return Response.json({ id: resultado.insertId }, { status: 201 });
+  const grupoId = resultado.insertId;
+
+  for (const nomeParticipante of participantes) {
+    await pool.query(
+      "INSERT INTO participante (grupo_id, nome) VALUES (?, ?)",
+      [grupoId, nomeParticipante]
+    );
+  }
+
+  return Response.json({ id: grupoId }, { status: 201 });
 }
