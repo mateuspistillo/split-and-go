@@ -42,7 +42,14 @@ export default function GroupForm() {
         <Hint>Um grupo precisa de pelo menos dois participantes.</Hint>
       </Field>
 
-      <AddButton type="button">Adicionar participante</AddButton>
+      <AddButton
+        type="button"
+        onClick={() => {
+          setParticipantes([...participantes, ""]);
+        }}
+      >
+        Adicionar participante
+      </AddButton>
       <SubmitButton type="button">Criar grupo</SubmitButton>
     </Card>
   );
