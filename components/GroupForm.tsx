@@ -7,6 +7,7 @@ import Card from "./Card"
 export default function GroupForm() {
   const [nome, setNome] = useState("");
   const [participantes, setParticipantes] = useState(["", ""]);
+  const [erroNome, setErroNome] = useState("");
   
   return (
     <Card>
@@ -20,6 +21,7 @@ export default function GroupForm() {
           value={nome || ""}
           onChange={(e) => setNome(e.target.value)}
         />
+        {erroNome && <Hint>{erroNome}</Hint>}
       </Field>
 
       <Field>
@@ -50,7 +52,19 @@ export default function GroupForm() {
       >
         Adicionar participante
       </AddButton>
-      <SubmitButton type="button">Criar grupo</SubmitButton>
+      <SubmitButton
+        type="button"
+        onClick={() => {
+          if (nome.trim() === "") {
+            setErroNome("Por favor, escolha um nome para o grupo.");
+            return;
+          }
+
+          setErroNome("");
+        }}
+      >
+        Criar grupo
+      </SubmitButton>
     </Card>
   );
 }
