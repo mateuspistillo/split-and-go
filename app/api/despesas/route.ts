@@ -119,3 +119,51 @@ export async function POST(request: Request) {
     conexao.release();
   }
 }
+
+export async function GET(request: Request) {
+  const grupoId = Number(new URL(request.url).searchParams.get("grupoId"));
+
+  if (!Number.isInteger(grupoId) || grupoId <= 0) {
+    return Response.json(
+      { erro: "Informe o grupoId na URL." },
+      { status: 400 }
+    );
+  }
+
+  const [despesas] = await pool.query<RowDataPacket[]>(
+    `SELECT d.id, d.descricao, d.valor_centavos, d.tipo_rateio,
+            d.participante_pagador_id, p.nome AS pagador_nome
+       FROM despesa d
+       JOIN participante p ON p.id = d.participante_pagador_id
+      WHERE d.grupo_id = ?
+      ORDER BY d.id DESC`,
+    [grupoId]
+  );
+
+  const [partes] = await pool.query<RowDataPacket[]>(
+    `SELECT pd.despesa_id, pd.participante_id, p.nome, pd.valor_centavos
+       FROM parte_despesa pd
+       JOIN participante p ON p.id = pd.participante_id
+       JOIN despesa d ON d.id = pd.despesa_id
+      WHERE d.grupo_id = ?`,
+    [grupoId]
+  );
+
+  const resultado = despesas.map((d) => ({
+    id: d.id,
+    descricao: d.descricao,
+    valorCentavos: d.valor_centavos,
+    tipoRateio: d.tipo_rateio,
+    pagadorId: d.participante_pagador_id,
+    pagadorNome: d.pagador_nome,
+    partes: partes
+      .filter((p) => p.despesa_id === d.id)
+      .map((p) => ({
+        participanteId: p.participante_id,
+        nome: p.nome,
+        valorCentavos: p.valor_centavos,
+      })),
+  }));
+
+  return Response.json(resultado);
+}
