@@ -1,6 +1,6 @@
 import { pool } from "@/lib/db";
+import { calcularRateio } from "./rateio";
 import type { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-
 
 export async function GET() {
   const [grupos] = await pool.query<RowDataPacket[]>(
