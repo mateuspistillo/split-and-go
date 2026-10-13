@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import Card from "./Card"
 
-export default function GroupForm() {
+export default function GroupForm({ aoCriar }: { aoCriar: () => void }) {
   const [nome, setNome] = useState("");
   const [participantes, setParticipantes] = useState(["", ""]);
   const [erroNome, setErroNome] = useState("");
@@ -34,6 +34,7 @@ export default function GroupForm() {
     setErroServidor("");
     setNome("");
     setParticipantes(["", ""]);
+    aoCriar();
   }
   
   return (
