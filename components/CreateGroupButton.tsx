@@ -1,15 +1,22 @@
 "use client";
 
 import styled from "styled-components";
+import CardArea from "./Card";
 
 
-export default function CreateGroupButton() {
-  return ( 
-    <Button>
-      CRIAR UM GRUPO NOVO
-    </Button>
-  )
-}
+export default function CreateGroupButton({
+  onClick,
+  }: {
+    onClick: () => void;
+  }) {
+    return (
+      <CardArea> 
+        <Button onClick={onClick}>
+          CRIAR UM GRUPO NOVO
+        </Button>
+      </CardArea>
+    )
+  }
 
 const Button = styled.button`
   padding: 12px 24px;
