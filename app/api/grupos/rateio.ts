@@ -95,3 +95,35 @@ export function validarParticipantesRateio (
         );
     }
 }
+
+export function validarSomaPartes(
+    valorTotalCentavos: number,
+    partesCentavos: number[]
+): void {
+    // A lista de partes não pode estar vazia
+    if (partesCentavos.length === 0) {
+        throw new Error("Informe pelo menos uma parte no rateio.");
+    }
+
+    // Cada parte precisa ser um número inteiro não negativo
+    if (
+        partesCentavos.some(
+            (valor) => !Number.isInteger(valor) || valor < 0
+        )
+    ) {
+        throw new Error("Os valores das partes são inválidos.");
+    }
+
+    // Soma os valores destinados a todos os participantes
+    const somaPartes = partesCentavos.reduce(
+        (soma, valor) => soma + valor,
+        0
+    );
+
+    // O total dividido precisa ser exatamente igual à despesa
+    if (somaPartes !== valorTotalCentavos) {
+        throw new Error(
+            "A soma das partes deve ser igual ao valor da despesa."
+        );
+    }
+}
