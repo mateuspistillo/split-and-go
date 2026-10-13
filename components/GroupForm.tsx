@@ -8,6 +8,24 @@ export default function GroupForm() {
   const [nome, setNome] = useState("");
   const [participantes, setParticipantes] = useState(["", ""]);
   const [erroNome, setErroNome] = useState("");
+
+  async function criarGrupo() {
+    if (nome.trim() === "") {
+      setErroNome("Por favor, escolha um nome para o grupo.");
+      return;
+    }
+
+    setErroNome("");
+
+    const resposta = await fetch("/api/grupos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome, participantes }),
+    });
+
+    const dados = await resposta.json();
+    console.log(resposta.status, dados);
+  }
   
   return (
     <Card>
@@ -54,14 +72,7 @@ export default function GroupForm() {
       </AddButton>
       <SubmitButton
         type="button"
-        onClick={() => {
-          if (nome.trim() === "") {
-            setErroNome("Por favor, escolha um nome para o grupo.");
-            return;
-          }
-
-          setErroNome("");
-        }}
+        onClick={criarGrupo}
       >
         Criar grupo
       </SubmitButton>
