@@ -6,11 +6,26 @@ import Card from "./Card"
 
 export default function GroupForm({ aoCriar }: { aoCriar: () => void }) {
   const [nome, setNome] = useState("");
-  const [participantes, setParticipantes] = useState(["", ""]);
+  const [participantes, setParticipantes] = useState<string[]>([]);
+  const [novoParticipante, setNovoParticipante] = useState("");
   const [erroNome, setErroNome] = useState("");
+  const [erroParticipante, setErroParticipante] = useState("");
   const [erroServidor, setErroServidor] = useState("");
 
+  function adicionarParticipante() {
+    if (novoParticipante.trim() === "") {
+      setErroParticipante("Por favor, adicione um integrante ao grupo.");
+      return;
+    }
+
+    setErroParticipante("");
+
+    setParticipantes([...participantes, novoParticipante.trim()]);
+    setNovoParticipante("");
+  }
+
   async function criarGrupo() {
+
     if (nome.trim() === "") {
       setErroNome("Por favor, escolha um nome para o grupo.");
       return;
@@ -53,33 +68,27 @@ export default function GroupForm({ aoCriar }: { aoCriar: () => void }) {
       </Field>
 
       <Field>
-        <Label htmlFor="participantes">Participantes</Label>
+        <Label htmlFor="novo-participante">Participantes</Label>
 
-        {participantes.map((participante, index) => (
-          <Input
-            key={index}
-            id={`participante-${index}`}
-            placeholder="Nome do participante"
-            value={participante}
-            onChange={(e) => {
-              const novaLista = [...participantes];
-              novaLista[index] = e.target.value;
-              setParticipantes(novaLista);
-            }}
-          />
-        ))}
+        <Input
+          id="novo-participante"
+          placeholder="Nome do participante"
+          value={novoParticipante}
+          onChange={(e) => setNovoParticipante(e.target.value)}
+        />
 
         {erroServidor && <Hint>{erroServidor}</Hint>}
       </Field>
 
       <AddButton
         type="button"
-        onClick={() => {
-          setParticipantes([...participantes, ""]);
-        }}
+        onClick={adicionarParticipante}
       >
         Adicionar participante
       </AddButton>
+      {participantes.map((participante, index) => (
+        <p key={index}>{participante}</p>
+      ))}
       <SubmitButton
         type="button"
         onClick={criarGrupo}
