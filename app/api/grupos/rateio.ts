@@ -65,3 +65,12 @@ export function calcularRateioPorcentagem(
 
     return valoresFinais;
 }
+
+export function validarValorDespesa(valorTotalCentavos: number): void {
+    if (
+        !Number.isInteger(valorTotalCentavos) ||
+        valorTotalCentavos <= 0
+    ) {
+        throw new Error("O valor da despesa deve ser positivo em centavos.");
+    }
+}
