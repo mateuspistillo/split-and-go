@@ -84,3 +84,14 @@ export function validarPagador(
         throw new Error("O pagador não pertence a este grupo.");
     }
 }
+
+export function validarParticipantesRateio (
+    quantidadeParticipantes: number
+): void {
+    // Não se pode dividir uma despesa sem participantes
+    if (!Number.isInteger(quantidadeParticipantes) || quantidadeParticipantes <= 0) {
+        throw new Error(
+            "É necessário pelo menos um participante no rateio"
+        );
+    }
+}
