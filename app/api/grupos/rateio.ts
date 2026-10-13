@@ -20,3 +20,48 @@ export function calcularRateio( valorTotalCentavos: number, quantidadeParticipan
         (_, indice) => valorBase + (indice < centavosRestantes ? 1 : 0)
     );
 }
+
+export function calcularRateioPorcentagem(
+    valorTotalCentavos: number, porcentagens: number[]
+): number[] {
+    if (!Number.isInteger(valorTotalCentavos) || valorTotalCentavos <= 0) {
+        throw new Error("O valor da despesa deve ser positivo e em centavos");
+    }
+
+    if (porcentagens.length === 0 || porcentagens.some((p) => !Number.isFinite(p) || p < 0 || p > 100) ) {
+        throw new Error("As porcentagens informadas são inválidas");
+    }
+
+    const somaPorcentagens = porcentagens.reduce(
+        (soma, porcentagem) => soma + porcentagem,
+        0
+    );
+
+    if (Math.abs(somaPorcentagens - 100) > 0.000001) {
+        throw new Error("As porcentagens devem somar 100%");
+    }
+
+    const valoresExatos = porcentagens.map(
+        (porcentagem) => (valorTotalCentavos * porcentagem) / 100
+    );
+
+    const valoresFinais = valoresExatos.map(Math.floor);
+
+    let centavosRestantes = 
+    valorTotalCentavos -
+    valoresFinais.reduce((soma, valor) => soma + valor, 0);
+
+    const indicesOrdenados = valoresExatos
+    .map((valor, indice) => ({
+        indice,
+        resto: valor - Math.floor(valor),
+    }))
+
+    .sort((a, b) => b.resto - a.resto);
+
+    for (let i = 0; i < centavosRestantes; i++) {
+        valoresFinais[indicesOrdenados[i].indice]++;
+    }
+
+    return valoresFinais;
+}
