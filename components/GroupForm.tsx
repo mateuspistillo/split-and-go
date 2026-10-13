@@ -8,6 +8,7 @@ export default function GroupForm() {
   const [nome, setNome] = useState("");
   const [participantes, setParticipantes] = useState(["", ""]);
   const [erroNome, setErroNome] = useState("");
+  const [erroServidor, setErroServidor] = useState("");
 
   async function criarGrupo() {
     if (nome.trim() === "") {
@@ -24,7 +25,15 @@ export default function GroupForm() {
     });
 
     const dados = await resposta.json();
-    console.log(resposta.status, dados);
+    
+    if (!resposta.ok) {
+      setErroServidor(dados.erro);
+      return;
+    }
+
+    setErroServidor("");
+    setNome("");
+    setParticipantes(["", ""]);
   }
   
   return (
@@ -59,7 +68,7 @@ export default function GroupForm() {
           />
         ))}
 
-        <Hint>Um grupo precisa de pelo menos dois participantes.</Hint>
+        {erroServidor && <Hint>{erroServidor}</Hint>}
       </Field>
 
       <AddButton
