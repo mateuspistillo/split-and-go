@@ -1,10 +1,10 @@
 import PageContainer from "@/components/PageContainer";
-import CreateGroupButton from "@/components/CreateGroupButton";
+import CreateGroupSection from "@/components/CreateGroupSection";
 
 export default function Home() {
   return (
     <PageContainer>
-      <CreateGroupButton />
+      <CreateGroupSection />
     </PageContainer>
   );
 }

@@ -1,22 +1,44 @@
 "use client";
 
 import styled from "styled-components";
+import { useState } from "react";
 import Card from "./Card"
 
 export default function GroupForm() {
+  const [nome, setNome] = useState("");
+  const [participantes, setParticipantes] = useState(["", ""]);
+  
   return (
     <Card>
       <Title>NOVO GRUPO</Title>
 
       <Field>
         <Label htmlFor="nome-grupo">Nome do grupo</Label>
-        <Input id="nome-grupo" placeholder="Ex.: Viagem para a praia" />
+        <Input
+          id="nome-grupo"
+          placeholder="Ex.: Viagem para a praia"
+          value={nome || ""}
+          onChange={(e) => setNome(e.target.value)}
+        />
       </Field>
 
       <Field>
-        <Label htmlFor="participante-1">Participantes</Label>
-        <Input id="participante-1" placeholder="Nome do participante" />
-        <Input aria-label="Participante 2" placeholder="Nome do participante" />
+        <Label htmlFor="participantes">Participantes</Label>
+
+        {participantes.map((participante, index) => (
+          <Input
+            key={index}
+            id={`participante-${index}`}
+            placeholder="Nome do participante"
+            value={participante}
+            onChange={(e) => {
+              const novaLista = [...participantes];
+              novaLista[index] = e.target.value;
+              setParticipantes(novaLista);
+            }}
+          />
+        ))}
+
         <Hint>Um grupo precisa de pelo menos dois participantes.</Hint>
       </Field>
 
