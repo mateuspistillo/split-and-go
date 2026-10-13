@@ -1,9 +1,24 @@
 import { pool } from "@/lib/db";
-import type { ResultSetHeader } from "mysql2/promise";
+import type { ResultSetHeader, RowDataPacket } from "mysql2/promise";
+
 
 export async function GET() {
-  const [linhas] = await pool.query("SELECT * FROM grupo");
-  return Response.json(linhas);
+  const [grupos] = await pool.query<RowDataPacket[]>(
+    "SELECT id, nome FROM grupo ORDER BY id DESC"
+  );
+  const [participantes] = await pool.query<RowDataPacket[]>(
+    "SELECT grupo_id, nome FROM participante"
+  );
+
+  const resultado = grupos.map((g) => ({
+    id: g.id,
+    nome: g.nome,
+    participantes: participantes
+      .filter((p) => p.grupo_id === g.id)
+      .map((p) => p.nome),
+    }));
+
+  return Response.json(resultado);
 }
 
 export async function POST(request: Request) {
