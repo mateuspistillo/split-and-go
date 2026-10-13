@@ -74,3 +74,13 @@ export function validarValorDespesa(valorTotalCentavos: number): void {
         throw new Error("O valor da despesa deve ser positivo em centavos.");
     }
 }
+
+export function validarPagador(
+    grupoIdDespesa: number,
+    grupoIdPagador: number
+): void {
+    // O grupo do pagador precisa ser o mesmo da despesa
+    if (grupoIdDespesa !== grupoIdPagador) {
+        throw new Error("O pagador não pertence a este grupo.");
+    }
+}
