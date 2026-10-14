@@ -5,10 +5,12 @@ import styled from "styled-components";
 import CreateGroupButton from "./CreateGroupButton";
 import GroupForm from "./GroupForm";
 import GroupList, { type Grupo } from "./GroupList";
+import SettlementPanel from "./SettlementPanel";
 
 export default function CreateGroupSection() {
   const [aberto, setAberto] = useState(false);
   const [grupos, setGrupos] = useState<Grupo[]>([]);
+  const [acerto, setAcerto] = useState<Grupo | null>(null);
 
   async function carregar() {
     const resposta = await fetch("/api/grupos");
@@ -19,6 +21,18 @@ export default function CreateGroupSection() {
     carregar();
   }, []);
 
+  if (acerto) {
+    return (
+      <Wrapper>
+        <SettlementPanel
+          grupoId={acerto.id}
+          grupoNome={acerto.nome}
+          aoFechar={() => setAcerto(null)}
+        />
+      </Wrapper>
+    );
+  }
+
   return (
     <Wrapper>
       {aberto ? (
@@ -26,7 +40,7 @@ export default function CreateGroupSection() {
       ) : (
         <CreateGroupButton onClick={() => setAberto(true)} />
       )}
-      <GroupList grupos={grupos} />
+      <GroupList grupos={grupos} aoVerAcerto={setAcerto} />
     </Wrapper>
   );
 }
