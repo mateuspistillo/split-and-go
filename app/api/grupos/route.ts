@@ -6,16 +6,20 @@ export async function GET() {
     "SELECT id, nome FROM grupo ORDER BY id DESC"
   );
   const [participantes] = await pool.query<RowDataPacket[]>(
-    "SELECT grupo_id, nome FROM participante"
+    "SELECT id, grupo_id, nome FROM participante ORDER by id"
   );
 
-  const resultado = grupos.map((g) => ({
-    id: g.id,
-    nome: g.nome,
-    participantes: participantes
-      .filter((p) => p.grupo_id === g.id)
-      .map((p) => p.nome),
-    }));
+  const resultado = grupos.map((g) => {
+    const membros = participantes
+    .filter((p) => p.grupo_id === g.id)
+    .map((p) => ({ id: p.id, nome: p.nome }));
+    return {
+      id: g.id,
+      nome: g.nome,
+      participantes: membros.map((m) => m.nome),
+    };
+
+  });
 
   return Response.json(resultado);
 }

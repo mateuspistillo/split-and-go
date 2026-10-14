@@ -2,9 +2,17 @@
 
 import styled from "styled-components";
 
-export type Grupo = { id: number; nome: string; participantes: string[] };
+export type Grupo = { id: number; nome: string; participantes: string[]; membros: { id: number; nome: string }[]; };
 
-export default function GroupList({ grupos }: { grupos: Grupo[] }) {
+export default function GroupList({ 
+  grupos,
+  aoVerAcerto,
+  aoVerDespesas, 
+}: { 
+  grupos: Grupo[];
+  aoVerAcerto: (grupo: Grupo) => void;
+  aoVerDespesas: (grupo: Grupo) => void;
+ }) {
   if (grupos.length === 0) {
     return <Empty>Nenhum grupo criado ainda.</Empty>;
   }
