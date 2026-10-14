@@ -6,6 +6,16 @@ import { Section, Label, Input, Select, PrimaryButton } from "./ui";
 import SplitFields from "./SplitFields";
 import type { Grupo } from "./GroupList";
 
+const TIPOS = [
+  { valor: "igual", rotulo: "Igual" },
+  { valor: "porcentagem", rotulo: "Porcentagem" },
+  { valor: "valor_fixo", rotulo: "Valor fixo" },
+];
+
+function paraNumero(texto: string) {
+  return Number(texto.replace(",", "."));
+}
+
 export default function ExpenseForm({
   grupo,
   aoLancar,
@@ -16,9 +26,26 @@ export default function ExpenseForm({
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [pagadorId, setPagadorId] = useState(grupo.membros[0]?.id ?? 0);
+  const [tipo, setTipo] = useState("igual");
   const [marcados, setMarcados] = useState<Record<number, boolean>>(() =>
     Object.fromEntries(grupo.membros.map((m) => [m.id, true]))
   );
+  const [campos, setCampos] = useState<Record<number, string>>({});
+
+  function montarParticipantes() {
+    return grupo.membros
+      .filter((m) => marcados[m.id])
+      .map((m) => {
+        const texto = campos[m.id] ?? "";
+        if (tipo === "porcentagem") {
+          return { id: m.id, porcentagem: paraNumero(texto) };
+        }
+        if (tipo === "valor_fixo") {
+          return { id: m.id, valorCentavos: paraCentavos(texto) };
+        }
+        return { id: m.id };
+      });
+  }
 
   async function lancar() {
     const resposta = await fetch("/api/despesas", {
@@ -29,10 +56,8 @@ export default function ExpenseForm({
         descricao,
         valorCentavos: paraCentavos(valor),
         pagadorId,
-        tipoRateio: "igual",
-        participantes: grupo.membros
-          .filter((m) => marcados[m.id])
-          .map((m) => ({ id: m.id })),
+        tipoRateio: tipo,
+        participantes: montarParticipantes(),
       }),
     });
 
@@ -40,6 +65,7 @@ export default function ExpenseForm({
 
     setDescricao("");
     setValor("");
+    setCampos({});
     aoLancar();
   }
 
@@ -71,10 +97,22 @@ export default function ExpenseForm({
         ))}
       </Select>
 
+      <Label>Como dividir</Label>
+      <Select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+        {TIPOS.map((t) => (
+          <option key={t.valor} value={t.valor}>
+            {t.rotulo}
+          </option>
+        ))}
+      </Select>
+
       <SplitFields
         membros={grupo.membros}
+        tipo={tipo}
         marcados={marcados}
+        campos={campos}
         aoMarcar={(id, v) => setMarcados({ ...marcados, [id]: v })}
+        aoDigitar={(id, texto) => setCampos({ ...campos, [id]: texto })}
       />
 
       <PrimaryButton type="button" onClick={lancar}>
