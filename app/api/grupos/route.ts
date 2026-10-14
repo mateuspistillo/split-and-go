@@ -17,6 +17,7 @@ export async function GET() {
       id: g.id,
       nome: g.nome,
       participantes: membros.map((m) => m.nome),
+      membros,
     };
 
   });
