@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Panel, Title, Subtitle, GhostButton } from "./ui";
 import ExpenseList, { type Despesa } from "./ExpenseList";
+import ExpenseForm from "./ExpenseForm";
 import type { Grupo } from "./GroupList";
 
 export default function ExpensePanel({
@@ -26,6 +27,7 @@ export default function ExpensePanel({
   return (
     <Panel>
       <Title>Despesas: {grupo.nome}</Title>
+      <ExpenseForm grupo={grupo} aoLancar={carregar} />
       <Subtitle>Despesas do grupo</Subtitle>
       <ExpenseList despesas={despesas} />
       <GhostButton type="button" onClick={aoFechar}>

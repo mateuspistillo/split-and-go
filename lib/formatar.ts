@@ -4,3 +4,7 @@ export function formatarReais(centavos: number): string {
     currency: "BRL",
   });
 }
+
+export function paraCentavos(texto: string): number {
+  return Math.round(Number(texto.replace(",", ".")) * 100);
+}
