@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { paraCentavos } from "@/lib/formatar";
-import { Section, Label, Input, Select, PrimaryButton } from "./ui";
+import { Section, Label, Input, Select, PrimaryButton, ErrorText } from "./ui";
 import SplitFields from "./SplitFields";
 import type { Grupo } from "./GroupList";
 
@@ -31,7 +31,8 @@ export default function ExpenseForm({
     Object.fromEntries(grupo.membros.map((m) => [m.id, true]))
   );
   const [campos, setCampos] = useState<Record<number, string>>({});
-
+  const [erro, setErro] = useState("");
+  
   function montarParticipantes() {
     return grupo.membros
       .filter((m) => marcados[m.id])
@@ -61,7 +62,14 @@ export default function ExpenseForm({
       }),
     });
 
-    if (!resposta.ok) return;
+    const json = await resposta.json();
+
+    if (!resposta.ok) {
+      setErro(json.erro);
+      return;
+    }
+
+    setErro("");
 
     setDescricao("");
     setValor("");
@@ -114,7 +122,8 @@ export default function ExpenseForm({
         aoMarcar={(id, v) => setMarcados({ ...marcados, [id]: v })}
         aoDigitar={(id, texto) => setCampos({ ...campos, [id]: texto })}
       />
-
+    
+    {erro && <ErrorText>{erro}</ErrorText>}
       <PrimaryButton type="button" onClick={lancar}>
         Lançar despesa
       </PrimaryButton>
