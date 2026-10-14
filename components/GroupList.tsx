@@ -2,14 +2,21 @@
 
 import styled from "styled-components";
 
-export type Grupo = { id: number; nome: string; participantes: string[] };
+export type Grupo = {
+  id: number;
+  nome: string;
+  participantes: string[];
+  membros: { id: number; nome: string }[];
+};
 
 export default function GroupList({
   grupos,
   aoVerAcerto, 
+  aoVerDespesas,
 }: { 
   grupos: Grupo[];
   aoVerAcerto: (grupo: Grupo) => void;
+  aoVerDespesas: (grupo: Grupo) => void;
  }) {
   if (grupos.length === 0) {
     return <Empty>Nenhum grupo criado ainda.</Empty>;
@@ -21,9 +28,14 @@ export default function GroupList({
         <Item key={g.id}>
           <Name>{g.nome}</Name>
           <Members>{g.participantes.join(", ")}</Members>
-                    <SettleButton type="button" onClick={() => aoVerAcerto(g)}>
-            Ver acerto de contas
-          </SettleButton>
+          <div style={{ display: "flex", gap: 8 }}>
+            <SettleButton type="button" onClick={() => aoVerDespesas(g)}>
+              Despesas
+            </SettleButton>
+            <SettleButton type="button" onClick={() => aoVerAcerto(g)}>
+              Ver acerto de contas
+            </SettleButton>
+          </div>
         </Item>
       ))}
     </List>
