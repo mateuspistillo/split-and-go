@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { formatarReais } from "@/lib/formatar";
 import { Panel, Title, Subtitle, Section, Row, Muted, GhostButton } from "./ui";
+import Statement, { type SaldoExtrato, type DespesaExtrato } from "./Statement";
 
-type Saldo = { id: number; nome: string; saldo: number };
 type Pagamento = { de: string; para: string; valorCentavos: number };
 type Liquidacao = {
-    saldos: Saldo[];
+    saldos: SaldoExtrato[];
     somaSaldos: number;
     pagamentos: Pagamento[];
 };
@@ -26,7 +26,9 @@ export default function SettlementPanel({
     grupoNome: string;
     aoFechar: () => void;
 }) {
+
     const [dados, setDados] = useState<Liquidacao | null>(null);
+    const [despesas, setDespesas] = useState<DespesaExtrato[]>([]);
     const [erro, setErro] = useState("");
 
     useEffect(() => {
@@ -38,6 +40,10 @@ export default function SettlementPanel({
             return;
         }
         setDados(json);
+        // As despesas alimentam o extrato individual.
+        const respostaDespesas = await fetch(`/api/despesas?grupoId=${grupoId}`);
+        if (respostaDespesas.ok) setDespesas(await respostaDespesas.json());
+
         }
         carregar();
     }, [grupoId]);
@@ -54,17 +60,16 @@ export default function SettlementPanel({
                     <Section>
                         <Subtitle>Saldo de cada pessoa</Subtitle>
                         {dados.saldos.map((s) => (
-                        <Row key={s.id}>
-                            <span>{s.nome}</span>
-                            <Valor $positivo={s.saldo >= 0}>
-                            {s.saldo >= 0 ? "recebe " : "deve "}
-                            {formatarReais(Math.abs(s.saldo))}
-                            </Valor>
-                        </Row>
+                            <Row key={s.id}>
+                                <span>{s.nome}</span>
+                                <Valor $positivo={s.saldo >= 0}>
+                                    {s.saldo >= 0 ? "recebe " : "deve "}
+                                    {formatarReais(Math.abs(s.saldo))}
+                                </Valor>
+                            </Row>
                         ))}
                         <Muted>Soma dos saldos: {formatarReais(dados.somaSaldos)}</Muted>
                     </Section>
-
                     <Section>
                         <Subtitle>Quem paga quem</Subtitle>
                         {dados.pagamentos.length === 0 ? (
@@ -76,7 +81,7 @@ export default function SettlementPanel({
                                 {dados.pagamentos.map((p, i) => (
                                     <Row key={i}>
                                         <span>
-                                        {p.de} paga a {p.para}
+                                            {p.de} paga a {p.para}
                                         </span>
                                         <strong>{formatarReais(p.valorCentavos)}</strong>
                                     </Row>
@@ -85,6 +90,9 @@ export default function SettlementPanel({
                             </>
                         )}
                     </Section>
+                    {despesas.length > 0 && (
+                        <Statement saldos={dados.saldos} despesas={despesas} />
+                    )}
                 </>
             )}
 
