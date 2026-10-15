@@ -30,6 +30,8 @@ export async function GET(request: Request) {
     const saldos: Saldo[] = linhas.map((l) => ({
         id: l.id,
         nome: l.nome,
+        pago: Number(l.pago),
+        devido: Number(l.devido),
         saldo: Number(l.pago) - Number(l.devido),
     }));
 
