@@ -10,7 +10,7 @@ MVP de uma plataforma para dividir despesas em grupo (viagens, repúblicas, even
 - **Grupos e integrantes:** cria grupos com vários participantes (mínimo de dois), com validação na tela e na API.
 - **Despesas flexíveis:** uma despesa é paga por uma pessoa e dividida entre N pessoas, com rateio **igual**, **por porcentagem** ou **por valor fixo**.
 - **Lista de despesas** de cada grupo, com a parte de cada participante.
-- **Painel de quitação:** mostra o saldo de cada pessoa (quem recebe e quem deve) e o plano de pagamentos que zera todas as contas.
+- **Painel de quitação:** mostra o saldo de cada pessoa (quem recebe e quem deve), o **extrato individual** (o que cada um pagou e a sua parte em cada despesa) e o plano de pagamentos que zera todas as contas.
 
 ## Stack e por que foi escolhida
 
