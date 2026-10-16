@@ -153,9 +153,6 @@ e abra `http://localhost:3000`. A senha acima é de desenvolvimento local, e nã
 
 ## Limitações conhecidas e próximos passos
 
-- A criação de grupo grava o grupo e depois cada participante, **sem transação**: uma falha no meio pode deixar um grupo sem participantes. A despesa já usa transação, e o mesmo ajuste cabe ao grupo.
-- O styled-components ainda não tem a configuração de SSR do Next (o registry), o que gera um aviso de hidratação no ambiente de desenvolvimento.
 - Não há testes automatizados do algoritmo e das funções de rateio. A soma dos saldos retornada pela API serve como verificação manual.
 - Porcentagens como 33,33% três vezes somam 99,99% e são recusadas: é preciso ajustar uma delas (por exemplo, 33,34%).
 - Dois participantes com o mesmo nome no mesmo grupo são aceitos.
-- Não há autenticação, extrato individual nem aplicação publicada.
